@@ -14,7 +14,6 @@ Assim ajudando a organizar melhor a agenda e reduzir o tempo de espera.
 
 * HTML
 * CSS
-* JavaScript
 
 ## Como contribuir
 
