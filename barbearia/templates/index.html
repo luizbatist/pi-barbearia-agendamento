@@ -1,43 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Rafa darc - agendamentos</title>
-</head>
-<body>
+{% extends 'layout.html' %}
 
-    <h1>Rafa darc - agendamentos</h1>
-    <form method="POST" action="/">
-        <input type="text" name="nome" placeholder="nome do cliente" required>
-        <input type="text" name="servico" placeholder="serviço" required>
-        <input type="date" name="data" required>
-        <input type="time" name="horario" required>
-        <button type="submit">Agendar</button>
-    </form>
+{% block content %}
+    <header class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-3 fw-bold">Rafa darc - Barbearia</h1>
+            <p class="lead">Estilo, tradição e o melhor corte da região de Mairinque.</p>
+            <a href="/agendar" class="btn btn-primary btn-lg mt-3">Agende seu Horário agora</a>
+        </div>
+    </header>
 
-    <h2>Agendamentos Marcados</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nome</th>
-                <th>Serviço</th>
-                <th>Data</th>
-                <th>Horário</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for a in agendamentos %}
-            <tr>
-                <td>{{ a.id }}</td>
-                <td>{{ a.nome }}</td>
-                <td>{{ a.servico }}</td>
-                <td>{{ a.data }}</td>
-                <td>{{ a.horario }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-</body>
-</html>
+    <section class="container py-5">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <h3>Corte Moderno</h3>
+                <p>Degradês, Undercuts e os estilos que estão em alta.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Barba Premium</h3>
+                <p>Tratamento com toalha quente e produtos de primeira.</p>
+            </div>
+            <div class="col-md-4">
+                <h3>Ambiente</h3>
+                <p>Um espaço pensado para o seu conforto e resenha.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
