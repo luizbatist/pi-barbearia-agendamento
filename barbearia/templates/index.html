@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Rafa darc - agendamentos</title>
+</head>
+<body>
+
+    <h1>Rafa darc - agendamentos</h1>
+    <form method="POST" action="/">
+        <input type="text" name="nome" placeholder="nome do cliente" required>
+        <input type="text" name="servico" placeholder="serviço" required>
+        <input type="date" name="data" required>
+        <input type="time" name="horario" required>
+        <button type="submit">Agendar</button>
+    </form>
+
+    <h2>Agendamentos Marcados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Serviço</th>
+                <th>Data</th>
+                <th>Horário</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in agendamentos %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td>{{ a.nome }}</td>
+                <td>{{ a.servico }}</td>
+                <td>{{ a.data }}</td>
+                <td>{{ a.horario }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
