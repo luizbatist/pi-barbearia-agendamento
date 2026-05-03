@@ -1,68 +1,42 @@
 {% extends 'layout.html' %}
 
-{% block content %}
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card shadow">
-                    <div class="card-header bg-dark text-white">
-                        <h4 class="mb-0">Novo Agendamento</h4>
-                    </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ url_for('agendamento.agendar') }}">
-                            <div class="mb-3">
-                                <label class="form-label">Nome do Cliente</label>
-                                <input type="text" name="nome" class="form-control" placeholder="Ex: David" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Serviço</label>
-                                <input type="text" name="servico" class="form-control" placeholder="Ex: Corte e Barba" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Data</label>
-                                <input type="date" name="data" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Horário</label>
-                                <input type="time" name="horario" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Confirmar Agendamento</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+{% block title %}Agendar - Rafa darc{% endblock %}
 
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-secondary text-white">
-                        <h4 class="mb-0">Agendamentos do Dia</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                            <tr>
-                                <th>#</th>
-                                <th>Nome</th>
-                                <th>Serviço</th>
-                                <th>Data</th>
-                                <th>Horário</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for a in agendamentos %}
-                                <tr>
-                                    <td>{{ a.id }}</td>
-                                    <td>{{ a.nome }}</td>
-                                    <td>{{ a.servico }}</td>
-                                    <td>{{ a.data }}</td>
-                                    <td>{{ a.horario }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">Novo Agendamento</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/agendar">
+                        <div class="mb-3">
+                            <label class="form-label">Serviço</label>
+                            <select name="servico" class="form-select" required>
+                                <option value="">Selecione um serviço</option>
+                                <option value="Corte">Corte</option>
+                                <option value="Barba">Barba</option>
+                                <option value="Corte e Barba">Corte e Barba</option>
+                                <option value="Degradê">Degradê</option>
+                                <option value="Pigmentação">Pigmentação</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data</label>
+                            <input type="date" name="data" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Horário</label>
+                            <input type="time" name="horario" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Confirmar Agendamento</button>
+                        <a href="/dashboard" class="btn btn-outline-secondary w-100 mt-2">Voltar</a>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

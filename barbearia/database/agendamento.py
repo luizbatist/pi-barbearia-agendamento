@@ -1,12 +1,26 @@
-""" IMPORTANDO O DB QUE CRIAMOS E A TABELA AGENDAMENTO QUE FOI DEFINIDA NO MODELS.PY"""
-from models import db, Agendamento
+""" IMPORTANDO AS BIBLIOTECAS """
+from models import db, Agendamento, Usuario
 
-""" DEFINE UMA FUNÇÃO QUE BUSCA OS AGENDAMENTOS DO BANCO"""
-def listar_agendamentos():
-    return Agendamento.query.all() #CONSULTA NO BANCO E RETORNA OS REGISTROS DA TABELA
+def inserir_agendamento(usuario_id, servico, data, horario):
+    """ Insere um novo agendamento ligado ao usuario """
+    agendamento = Agendamento(
+        usuario_id=usuario_id,
+        servico=servico,
+        data=data,
+        horario=horario
+    )
+    db.session.add(agendamento)
+    db.session.commit()
 
-""" FUNCAO QUE RETORNA OS 4 DADOS DEFINIDOS NO FORMULARIO"""
-def inserir_agendamento(nome, servico, data, horario):
-    novo = Agendamento(nome=nome, servico=servico, data=data, horario=horario)
-    db.session.add(novo) #COLOCA AS INFORMAÇÕES NOVAS NA FILA
-    db.session.commit() #SALVA NO BANCO
+def horario_disponivel(data, horario):
+    """ Verifica se o horario ja esta ocupado """
+    agendamento = Agendamento.query.filter_by(data=data, horario=horario).first()
+    return agendamento is None  # True se disponivel, False se ocupado
+
+def listar_agendamentos_por_usuario(usuario_id):
+    """ Retorna apenas os agendamentos do usuario logado """
+    return Agendamento.query.filter_by(usuario_id=usuario_id).all()
+
+def listar_todos_agendamentos():
+    """ Retorna todos os agendamentos (somente para admin) """
+    return Agendamento.query.join(Usuario).all()

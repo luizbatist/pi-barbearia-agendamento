@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block title %}Login - Rafa darc{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center">
+                    <h4 class="mb-0">Entrar na sua conta</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="/login">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Senha</label>
+                            <input type="password" name="senha" class="form-control" placeholder="Sua senha" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100">Entrar</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small>Não tem conta? <a href="/cadastro">Cadastre-se</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
