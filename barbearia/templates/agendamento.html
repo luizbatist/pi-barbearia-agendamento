@@ -1,42 +1,126 @@
 {% extends 'layout.html' %}
 
-{% block title %}Agendar - Rafa darc{% endblock %}
+{% block title %}Agendar - Rafa Darc{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h4 class="mb-0">Novo Agendamento</h4>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="/agendar">
-                        <div class="mb-3">
-                            <label class="form-label">Serviço</label>
-                            <select name="servico" class="form-select" required>
-                                <option value="">Selecione um serviço</option>
-                                <option value="Corte">Corte</option>
-                                <option value="Barba">Barba</option>
-                                <option value="Corte e Barba">Corte e Barba</option>
-                                <option value="Degradê">Degradê</option>
-                                <option value="Pigmentação">Pigmentação</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Data</label>
-                            <input type="date" name="data" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Horário</label>
-                            <input type="time" name="horario" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100">Confirmar Agendamento</button>
-                        <a href="/dashboard" class="btn btn-outline-secondary w-100 mt-2">Voltar</a>
-                    </form>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow border-0 rounded-4">
+                    <div class="card-header bg-black text-white text-center py-3 rounded-top-4">
+                        <h4 class="mb-0"><i class="fa-solid fa-calendar-plus me-2 text-secondary"></i>Novo Agendamento</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" action="/agendar" id="form-agendamento">
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Serviço</label>
+                                <select name="servico" class="form-select border-dark shadow-sm" required>
+                                    <option value="">Selecione um serviço</option>
+                                    <option value="Corte">Corte</option>
+                                    <option value="Barba">Barba</option>
+                                    <option value="Corte e Barba">Corte e Barba</option>
+                                    <option value="Degradê">Degradê</option>
+                                    <option value="Pigmentação">Pigmentação</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Data</label>
+                                <input type="date" name="data" id="data-agendamento" class="form-control border-dark shadow-sm" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Horários Disponíveis</label>
+                                <div id="horarios-container" class="d-flex flex-wrap gap-2 p-3 bg-light rounded border border-secondary border-opacity-25 shadow-inner">
+                                    <span class="text-muted small"><i class="fa-solid fa-arrow-up me-1"></i>Selecione uma data para ver os horários.</span>
+                                </div>
+                                <input type="hidden" name="horario" id="horario-selecionado" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-dark w-100 py-2 fw-bold mb-2 shadow-sm" id="btn-confirmar" disabled>
+                                Confirmar Agendamento
+                            </button>
+                            <a href="/dashboard" class="btn btn-outline-secondary w-100 fw-bold">Cancelar</a>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    {% block extra_css %}
+        <style>
+            /* Estilo para os chips de horário selecionáveis */
+            .btn-horario {
+                transition: all 0.2s ease;
+                min-width: 75px;
+            }
+            .btn-horario:hover {
+                background-color: #e9ecef;
+            }
+            .btn-horario.active {
+                background-color: #000 !important;
+                color: #fff !important;
+                border-color: #000 !important;
+                transform: scale(1.05);
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+        </style>
+    {% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dataInput = document.getElementById('data-agendamento');
+            const horariosContainer = document.getElementById('horarios-container');
+            const horarioSelecionado = document.getElementById('horario-selecionado');
+            const btnConfirmar = document.getElementById('btn-confirmar');
+
+            const hoje = new Date().toISOString().split('T')[0];
+            dataInput.setAttribute('min', hoje);
+
+            dataInput.addEventListener('change', async (e) => {
+                const dataEscolhida = e.target.value;
+                if (!dataEscolhida) return;
+
+                horariosContainer.innerHTML = '<div class="text-center w-100 py-2"><span class="spinner-border spinner-border-sm text-dark" role="status"></span> Carregando...</div>';
+                btnConfirmar.disabled = true;
+                horarioSelecionado.value = '';
+
+                try {
+                    const response = await fetch(`/api/horarios-disponiveis?data=${dataEscolhida}`);
+                    if (!response.ok) throw new Error('Erro na resposta do servidor');
+
+                    const horariosLivres = await response.json();
+                    horariosContainer.innerHTML = ''; // Limpa o carregamento
+
+                    if (horariosLivres.length === 0) {
+                        horariosContainer.innerHTML = '<span class="text-danger small fw-bold w-100 text-center py-2"><i class="fa-solid fa-calendar-xmark me-1"></i>Nenhum horário livre nesta data.</span>';
+                        return;
+                    }
+
+                    horariosLivres.forEach(hora => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-outline-dark btn-sm btn-horario fw-bold';
+                        btn.textContent = hora;
+
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('.btn-horario').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+
+                            horarioSelecionado.value = hora;
+                            btnConfirmar.disabled = false;
+                        });
+
+                        horariosContainer.appendChild(btn);
+                    });
+
+                } catch (error) {
+                    horariosContainer.innerHTML = '<span class="text-danger small"><i class="fa-solid fa-triangle-exclamation me-1"></i>Erro ao carregar horários.</span>';
+                    console.error(error);
+                }
+            });
+        });
+    </script>
 {% endblock %}

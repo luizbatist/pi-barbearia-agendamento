@@ -1,27 +1,53 @@
 {% extends 'layout.html' %}
 
+{% block title %}Início - Rafa Darc{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.6)),
+            url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 120px 0;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <header class="hero-section text-center">
         <div class="container">
-            <h1 class="display-3 fw-bold">Rafa darc - Barbearia</h1>
-            <p class="lead">Estilo, tradição e o melhor corte da região de Mairinque.</p>
-            <a href="/agendar" class="btn btn-primary btn-lg mt-3">Agende seu Horário agora</a>
+            <h1 class="display-3 fw-bold mb-3"><i class="fa-solid fa-scissors text-secondary me-2"></i>Rafa Darc</h1>
+            <p class="lead fs-4 text-light mb-5">Estilo, tradição e o melhor corte da região de Mairinque.</p>
+            <a href="/agendar" class="btn btn-light btn-lg px-5 py-3 fw-bold rounded-pill text-dark shadow">
+                Agende seu Horário Agora
+            </a>
         </div>
     </header>
 
-    <section class="container py-5">
-        <div class="row text-center">
+    <section class="container py-5 mt-4">
+        <div class="row text-center g-4">
             <div class="col-md-4">
-                <h3>Corte Moderno</h3>
-                <p>Degradês, Undercuts e os estilos que estão em alta.</p>
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-dark border-4">
+                    <i class="fa-solid fa-spray-can fa-3x mb-3 text-dark"></i>
+                    <h3 class="fw-bold">Corte Moderno</h3>
+                    <p class="text-muted">Degradês, Undercuts e os estilos que estão em alta no mercado atual.</p>
+                </div>
             </div>
             <div class="col-md-4">
-                <h3>Barba Premium</h3>
-                <p>Tratamento com toalha quente e produtos de primeira.</p>
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-dark border-4">
+                    <i class="fa-solid fa-soap fa-3x mb-3 text-dark"></i>
+                    <h3 class="fw-bold">Barba Premium</h3>
+                    <p class="text-muted">Tratamento completo com toalha quente, navalha e produtos de primeira linha.</p>
+                </div>
             </div>
             <div class="col-md-4">
-                <h3>Ambiente</h3>
-                <p>Um espaço pensado para o seu conforto e resenha.</p>
+                <div class="p-4 bg-white rounded-4 shadow-sm h-100 border-top border-dark border-4">
+                    <i class="fa-solid fa-couch fa-3x mb-3 text-dark"></i>
+                    <h3 class="fw-bold">Ambiente</h3>
+                    <p class="text-muted">Um espaço climatizado pensado para o seu conforto, com boa música e resenha.</p>
+                </div>
             </div>
         </div>
     </section>
