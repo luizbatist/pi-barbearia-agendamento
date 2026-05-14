@@ -22,3 +22,4 @@ class Agendamento(db.Model):
     servico = db.Column(db.String(100))
     data = db.Column(db.String(20))
     horario = db.Column(db.String(10))
+    status = db.Column(db.String(20), default='Agendado')

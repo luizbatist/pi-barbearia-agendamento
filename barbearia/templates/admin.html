@@ -1,40 +1,184 @@
 {% extends 'layout.html' %}
 
-{% block title %}Painel Admin - Rafa darc{% endblock %}
+{% block title %}Painel Admin - Rafa Darc{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h3 class="mb-4">Painel do Barbeiro — Todos os Agendamentos</h3>
+    <div class="container mt-5 mb-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+            <h3 class="mb-0"><i class="fa-solid fa-calendar-check text-secondary me-2"></i>Agenda Geral</h3>
+            <span class="badge bg-dark fs-6 py-2 px-3 shadow-sm">Total de Registros: <span id="contador-linhas">{{ agendamentos|length }}</span></span>
+        </div>
 
-    <div class="card shadow">
-        <div class="card-body">
-            {% if agendamentos %}
-                <table class="table table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th>Serviço</th>
-                            <th>Data</th>
-                            <th>Horário</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for a in agendamentos %}
+        <div class="card shadow-sm border-0 mb-4 bg-white rounded-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-white border-dark"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" id="filtro-nome" class="form-control border-dark" placeholder="Buscar por cliente...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-white border-dark"><i class="fa-regular fa-calendar"></i></span>
+                            <input type="date" id="filtro-data" class="form-control border-dark">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="filtro-status" class="form-select border-dark">
+                            <option value="">Todos os Status</option>
+                            <option value="Agendado">Agendado</option>
+                            <option value="Concluído">Concluído</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-dark w-100 fw-bold" id="btn-limpar-filtros">Limpar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow border-0 overflow-hidden rounded-4">
+            <div class="card-body p-0">
+                {% if agendamentos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0" id="tabela-agendamentos">
+                            <thead class="table-dark">
                             <tr>
-                                <td>{{ a.id }}</td>
-                                <td>{{ a.usuario.nome }}</td>
-                                <td>{{ a.servico }}</td>
-                                <td>{{ a.data }}</td>
-                                <td>{{ a.horario }}</td>
+                                <th class="ps-4">#</th>
+                                <th>Cliente</th>
+                                <th>Serviço</th>
+                                <th>Data</th>
+                                <th>Horário</th>
+                                <th>Status</th>
+                                <th class="text-center">Ações</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p class="text-muted text-center py-4">Nenhum agendamento encontrado.</p>
-            {% endif %}
+                            </thead>
+                            <tbody>
+                            {% for a in agendamentos %}
+                                <tr class="linha-agendamento"
+                                    data-nome="{{ a.usuario.nome | lower }}"
+                                    data-data="{{ a.data }}"
+                                    data-status="{{ a.status }}">
+
+                                    <td class="text-muted ps-4">{{ a.id }}</td>
+                                    <td class="fw-bold">{{ a.usuario.nome }}</td>
+                                    <td><span class="badge bg-light text-dark border">{{ a.servico }}</span></td>
+                                    <td>{{ a.data[8:10] }}/{{ a.data[5:7] }}/{{ a.data[0:4] }}</td>
+                                    <td class="fw-bold text-primary">{{ a.horario }}</td>
+                                    <td>
+                                        {% if a.status == 'Agendado' %}
+                                            <span class="badge rounded-pill bg-dark">Agendado</span>
+                                        {% elif a.status == 'Concluído' %}
+                                            <span class="badge rounded-pill bg-success">Concluído</span>
+                                        {% else %}
+                                            <span class="badge rounded-pill bg-danger">Cancelado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if a.status == 'Agendado' %}
+                                            <form action="/agendamento/{{ a.id }}/status" method="POST" class="d-inline">
+                                                <input type="hidden" name="novo_status" value="Concluído">
+                                                <button type="submit" class="btn btn-sm btn-success shadow-sm" title="Concluir">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <form action="/agendamento/{{ a.id }}/status" method="POST" class="d-inline ms-1">
+                                                <input type="hidden" name="novo_status" value="Cancelado">
+                                                <button type="submit" class="btn btn-sm btn-danger shadow-sm" title="Cancelar">
+                                                    <i class="fa-solid fa-xmark"></i>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted small">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <div id="mensagem-vazia" class="text-center py-5 d-none">
+                            <i class="fa-solid fa-magnifying-glass fa-2x text-muted mb-3"></i>
+                            <p class="text-muted fw-bold">Nenhum agendamento corresponde aos filtros atuais.</p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fa-solid fa-calendar-day fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Nenhum agendamento cadastrado no sistema ainda.</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
+
+    {% block extra_css %}
+        <style>
+            .linha-agendamento {
+                transition: opacity 0.3s ease;
+            }
+        </style>
+    {% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputNome = document.getElementById('filtro-nome');
+            const inputData = document.getElementById('filtro-data');
+            const selectStatus = document.getElementById('filtro-status');
+            const btnLimpar = document.getElementById('btn-limpar-filtros');
+
+            const linhas = document.querySelectorAll('.linha-agendamento');
+            const contador = document.getElementById('contador-linhas');
+            const mensagemVazia = document.getElementById('mensagem-vazia');
+            const theadTabela = document.querySelector('thead');
+
+            function filtrarTabela() {
+                const termoNome = inputNome.value.toLowerCase().trim();
+                const termoData = inputData.value; // Formato YYYY-MM-DD
+                const termoStatus = selectStatus.value;
+
+                let visiveis = 0;
+
+                linhas.forEach(linha => {
+                    const nomeCliente = linha.getAttribute('data-nome');
+                    const dataAgendamento = linha.getAttribute('data-data');
+                    const statusAgendamento = linha.getAttribute('data-status');
+
+                    const passouNome = termoNome === '' || nomeCliente.includes(termoNome);
+                    const passouData = termoData === '' || dataAgendamento === termoData;
+                    const passouStatus = termoStatus === '' || statusAgendamento === termoStatus;
+
+                    if (passouNome && passouData && passouStatus) {
+                        linha.style.display = ''; // Mostra a linha
+                        visiveis++;
+                    } else {
+                        linha.style.display = 'none'; // Esconde a linha
+                    }
+                });
+
+                contador.textContent = visiveis;
+
+                if (visiveis === 0) {
+                    mensagemVazia.classList.remove('d-none');
+                    theadTabela.style.display = 'none'; // Esconde o cabeçalho pra ficar mais limpo
+                } else {
+                    mensagemVazia.classList.add('d-none');
+                    theadTabela.style.display = '';
+                }
+            }
+
+            inputNome.addEventListener('input', filtrarTabela);
+            inputData.addEventListener('change', filtrarTabela);
+            selectStatus.addEventListener('change', filtrarTabela);
+
+            btnLimpar.addEventListener('click', () => {
+                inputNome.value = '';
+                inputData.value = '';
+                selectStatus.value = '';
+                filtrarTabela(); // Chama a função para resetar a visualização
+            });
+        });
+    </script>
 {% endblock %}

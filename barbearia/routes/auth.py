@@ -38,7 +38,10 @@ def login():
             session['usuario_id'] = usuario.id
             session['usuario_nome'] = usuario.nome
             session['is_admin'] = usuario.is_admin
-            return redirect(url_for('agendamento.dashboard'))
+            if usuario.is_admin:
+                return redirect(url_for('agendamento.admin')) # Manda pro painel do barbeiro
+            else:
+                return redirect(url_for('agendamento.dashboard')) # Manda pro painel do cliente
 
         flash('Email ou senha incorretos.', 'danger')
 
